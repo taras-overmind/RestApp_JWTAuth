@@ -10,8 +10,7 @@ import lombok.Data;
 @Data
 @Table(name = "users",
         uniqueConstraints = {
-                @UniqueConstraint(columnNames = "username"),
-                @UniqueConstraint(columnNames = "email")
+                @UniqueConstraint(columnNames = "username")
         })
 public class User {
     @Id
@@ -19,9 +18,6 @@ public class User {
     private Long id;
 
     private String username;
-
-    private String email;
-
     private String password;
 
     @ManyToMany(fetch = FetchType.LAZY)
@@ -33,11 +29,9 @@ public class User {
     public User() {
     }
 
-    public User(String username, String email, String password) {
+    public User(String username, String password) {
         this.username = username;
-        this.email = email;
         this.password = password;
     }
 
-    // getters and setters
 }

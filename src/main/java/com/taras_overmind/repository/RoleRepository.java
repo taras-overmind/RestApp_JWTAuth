@@ -1,4 +1,4 @@
-package com.taras_overmind;
+package com.taras_overmind.repository;
 import java.util.Optional;
 
 import com.taras_overmind.model.ERole;

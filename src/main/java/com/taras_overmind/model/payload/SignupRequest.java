@@ -1,4 +1,4 @@
-package com.taras_overmind.model;
+package com.taras_overmind.model.payload;
 
 import lombok.Data;
 
@@ -8,6 +8,5 @@ import java.util.Set;
 public class SignupRequest {
     private String username;
     private String password;
-    private String email;
     private Set<String> role;
 }

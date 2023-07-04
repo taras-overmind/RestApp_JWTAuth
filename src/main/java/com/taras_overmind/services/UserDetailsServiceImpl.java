@@ -1,6 +1,6 @@
 package com.taras_overmind.services;
 
-import com.taras_overmind.UserRepository;
+import com.taras_overmind.repository.UserRepository;
 import com.taras_overmind.model.User;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.core.userdetails.UserDetails;

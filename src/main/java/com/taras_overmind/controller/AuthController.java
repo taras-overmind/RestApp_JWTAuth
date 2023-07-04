@@ -1,15 +1,17 @@
 package com.taras_overmind.controller;
 
-import java.net.http.HttpResponse;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import com.taras_overmind.RoleRepository;
-import com.taras_overmind.UserRepository;
+import com.taras_overmind.repository.RoleRepository;
+import com.taras_overmind.repository.UserRepository;
 import com.taras_overmind.jwt.JwtUtils;
 import com.taras_overmind.model.*;
+import com.taras_overmind.model.payload.JwtResponse;
+import com.taras_overmind.model.payload.LoginRequest;
+import com.taras_overmind.model.payload.SignupRequest;
 import com.taras_overmind.services.UserDetailsImpl;
 
 import org.springframework.beans.factory.annotation.Autowired;
@@ -63,7 +65,6 @@ public class AuthController {
         return ResponseEntity.ok(new JwtResponse(jwt,
                 userDetails.getId(),
                 userDetails.getUsername(),
-                userDetails.getEmail(),
                 roles));
     }
 
@@ -73,14 +74,9 @@ public class AuthController {
             return HttpStatus.NOT_ACCEPTABLE;
         }
 
-        if (userRepository.existsByEmail(signUpRequest.getEmail())) {
-            return HttpStatus.NOT_ACCEPTABLE;
-        }
 
         // Create new user's account
-        User user = new User(signUpRequest.getUsername(),
-                signUpRequest.getEmail(),
-                encoder.encode(signUpRequest.getPassword()));
+        User user = new User(signUpRequest.getUsername(), encoder.encode(signUpRequest.getPassword()));
 
         Set<String> strRoles = signUpRequest.getRole();
         Set<Role> roles = new HashSet<>();
@@ -91,23 +87,14 @@ public class AuthController {
             roles.add(userRole);
         } else {
             strRoles.forEach(role -> {
-                switch (role) {
-                    case "admin":
-                        Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(adminRole);
-
-                        break;
-                    case "mod":
-                        Role modRole = roleRepository.findByName(ERole.ROLE_MODERATOR)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(modRole);
-
-                        break;
-                    default:
-                        Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-                                .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                        roles.add(userRole);
+                if ("admin".equals(role)) {
+                    Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
+                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                    roles.add(adminRole);
+                } else {
+                    Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+                    roles.add(userRole);
                 }
             });
         }

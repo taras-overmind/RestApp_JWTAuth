@@ -1,4 +1,4 @@
-package com.taras_overmind.model;
+package com.taras_overmind.model.payload;
 
 import lombok.Data;
 
