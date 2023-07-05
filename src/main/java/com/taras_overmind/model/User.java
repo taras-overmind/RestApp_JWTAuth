@@ -4,6 +4,7 @@ import java.util.HashSet;
 import java.util.Set;
 import jakarta.persistence.*;
 import lombok.Data;
+import lombok.NoArgsConstructor;
 
 
 @Entity
@@ -12,6 +13,7 @@ import lombok.Data;
         uniqueConstraints = {
                 @UniqueConstraint(columnNames = "username")
         })
+@NoArgsConstructor
 public class User {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
@@ -26,8 +28,9 @@ public class User {
             inverseJoinColumns = @JoinColumn(name = "role_id"))
     private Set<Role> roles = new HashSet<>();
 
-    public User() {
-    }
+//    @OneToMany(fetch = FetchType.LAZY)
+//    @JoinColumn(name="user_id")
+//    private Set<ContactEntity> contacts = new HashSet<>();
 
     public User(String username, String password) {
         this.username = username;
