@@ -5,6 +5,7 @@ import com.taras_overmind.model.*;
 import com.taras_overmind.repository.ContactRepository;
 import com.taras_overmind.repository.UserRepository;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.transaction.annotation.Transactional;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.ArrayList;
@@ -18,10 +19,8 @@ public class SimpleController {
 
     @Autowired
     ContactRepository contactRepository;
-
     @Autowired
     UserRepository userRepository;
-
     @Autowired
     JwtUtils jwtUtils;
 
@@ -48,6 +47,7 @@ public class SimpleController {
 
     @PostMapping
     public void addContact(@RequestBody ContactDTO contactDTO, @RequestHeader("Authorization") String authorizationHeader){
+        //TODO verification
         String jwt = authorizationHeader.substring(7);
         String username = jwtUtils.getUserNameFromJwtToken(jwt);
         User user = userRepository.findByUsername(username).get();
@@ -65,8 +65,37 @@ public class SimpleController {
         contactRepository.save(contact);
     }
 
-    @DeleteMapping()
-    public void deleteContact(){}
+    @DeleteMapping
+    public void deleteContact(@RequestBody ContactDTO contactDTO, @RequestHeader("Authorization") String authorizationHeader){
+        //TODO check if present
+        String jwt = authorizationHeader.substring(7);
+        String username = jwtUtils.getUserNameFromJwtToken(jwt);
+        User user = userRepository.findByUsername(username).get();
+        ContactEntity contact = contactRepository.findByNameContactAndUser(contactDTO.getName(), user).get();
+        contact.getEmails().clear();
+        contact.getPhoneNumbers().clear();
+
+        contactRepository.delete(contact);
+    }
+    @PutMapping
+    public void editContact(@RequestBody ContactDTO contactDTO, @RequestHeader("Authorization") String authorizationHeader){
+        //TODO check if present
+        String jwt = authorizationHeader.substring(7);
+        String username = jwtUtils.getUserNameFromJwtToken(jwt);
+        User user = userRepository.findByUsername(username).get();
+
+        var contact = contactRepository.findByNameContactAndUser(contactDTO.getName(), user).get();
+        contact.getEmails().clear();
+        contact.getPhoneNumbers().clear();
+
+        contact.getPhoneNumbers().addAll(contactDTO.getPhoneNumbers().stream().map(PhoneNumber::new)
+                .collect(Collectors.toSet()));
+        contact.getEmails().addAll(contactDTO.getEmails().stream().map(Email::new)
+                .collect(Collectors.toSet()));
+
+
+        contactRepository.save(contact);
+    }
 
 
 }
