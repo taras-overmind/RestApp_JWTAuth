@@ -4,6 +4,7 @@ import lombok.AllArgsConstructor;
 import lombok.Data;
 import lombok.NoArgsConstructor;
 
+import java.util.HashSet;
 import java.util.Set;
 
 @Data
@@ -11,6 +12,6 @@ import java.util.Set;
 @AllArgsConstructor
 public class ContactDTO {
     private String name;
-    private Set<String> emails;
-    private Set<String> phoneNumbers;
+    private Set<String> emails = new HashSet<>();
+    private Set<String> phoneNumbers = new HashSet<>();
 }

@@ -3,7 +3,7 @@ package com.taras_overmind.jwt;
 import java.security.Key;
 import java.util.Date;
 
-import com.taras_overmind.services.UserDetailsImpl;
+import com.taras_overmind.model.UserDetailsImpl;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Value;

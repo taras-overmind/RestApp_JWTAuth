@@ -12,7 +12,7 @@ class SecurityDemoApplicationTests {
 	ContactRepository contactRepository;
 	@Test
 	void contextLoads() {
-		System.out.println(contactRepository.findById(1L).get());
+		System.out.println(contactRepository.findById(13L).get());
 	}
 
 }
