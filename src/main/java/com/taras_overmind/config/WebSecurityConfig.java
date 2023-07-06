@@ -60,10 +60,15 @@ public class WebSecurityConfig {
                 .exceptionHandling(exception -> exception.authenticationEntryPoint(unauthorizedHandler))
                 .sessionManagement(session -> session.sessionCreationPolicy(SessionCreationPolicy.STATELESS))
                 .authorizeHttpRequests(auth ->
-                        auth.requestMatchers("/api/auth/**").permitAll()
-                                .requestMatchers("/api/test/**").permitAll()
-                                .requestMatchers("/smthing").hasRole("ADMIN")
+                        auth.requestMatchers("/auth/**").permitAll()
+                                .requestMatchers("/register/**").permitAll()
+                                .requestMatchers("/swagger-ui/**").permitAll()
+                                .requestMatchers("/swagger-resources/**").permitAll()
+                                .requestMatchers("/swagger-ui.html").permitAll()
+                                .requestMatchers( "/v3/api-docs/**").permitAll()
+                                .requestMatchers("/webjars/**").permitAll()
                                 .anyRequest().authenticated()
+
                 );
 
         http.authenticationProvider(authenticationProvider());
@@ -72,4 +77,5 @@ public class WebSecurityConfig {
 
         return http.build();
     }
+
 }

@@ -3,7 +3,6 @@ package com.taras_overmind.controller;
 import com.fasterxml.jackson.core.type.TypeReference;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.taras_overmind.model.*;
-import com.taras_overmind.repository.ContactRepository;
 import com.taras_overmind.services.ContactService;
 import com.taras_overmind.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -17,7 +16,6 @@ import org.springframework.web.multipart.MultipartFile;
 import java.io.IOException;
 import java.util.List;
 import java.util.Optional;
-import java.util.stream.Collectors;
 
 @RestController
 @RequestMapping("/contacts")
@@ -40,7 +38,6 @@ public class ContactController {
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
     public String addContact(@RequestBody ContactDTO contactDTO, @RequestHeader("Authorization") String authorizationHeader) {
-        //TODO verification
         User user = userService.getUserByAuthorisationHeader(authorizationHeader).get();
 
         String check = contactService.createCheck(contactDTO, user);
@@ -77,7 +74,7 @@ public class ContactController {
 
         ContactEntity contact = contactService.getContactByNameAndUser(contactDTO.getName(), user).get();
 
-        contactService.copyEmailsAndNumbers(contact, contactDTO);
+        contactService.copyEmailsAndPhones(contact, contactDTO);
 
         contactService.save(contact);
         return "Edited successfully";
@@ -105,12 +102,10 @@ public class ContactController {
     @PostMapping("/import")
     @ResponseStatus(HttpStatus.CREATED)
     public String importData(@RequestParam("file") MultipartFile file, @RequestHeader("Authorization") String authorizationHeader) throws IOException {
-        // Check if the file is not empty
         if (file.isEmpty()) {
             throw new IllegalArgumentException("File is empty");
         }
 
-        // Read the JSON file content
         byte[] jsonData = file.getBytes();
         ObjectMapper objectMapper = new ObjectMapper();
         List<ContactDTO> list = objectMapper.readValue(jsonData, new TypeReference<>() {

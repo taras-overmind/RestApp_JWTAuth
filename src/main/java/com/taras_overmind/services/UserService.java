@@ -7,6 +7,7 @@ import com.taras_overmind.model.User;
 import com.taras_overmind.model.payload.SignupRequest;
 import com.taras_overmind.repository.RoleRepository;
 import com.taras_overmind.repository.UserRepository;
+import lombok.Data;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.security.crypto.password.PasswordEncoder;
 import org.springframework.stereotype.Service;
@@ -16,6 +17,7 @@ import java.util.Optional;
 import java.util.Set;
 
 @Service
+@Data
 public class UserService {
     @Autowired
     UserRepository userRepository;
@@ -26,7 +28,7 @@ public class UserService {
     @Autowired
     JwtUtils jwtUtils;
 
-    public Optional<User> getUserByAuthorisationHeader(String authorizationHeader){
+    public Optional<User> getUserByAuthorisationHeader(String authorizationHeader) {
         String jwt = authorizationHeader.substring(7);
         String username = jwtUtils.getUserNameFromJwtToken(jwt);
         return findByUsername(username);
@@ -41,33 +43,35 @@ public class UserService {
     }
 
     public User createNewUser(SignupRequest signUpRequest) {
-        User user = new User(signUpRequest.getUsername(), encoder.encode(signUpRequest.getPassword()));
+        User user = new User(signUpRequest.getLogin(), encoder.encode(signUpRequest.getPassword()));
 
-        Set<String> strRoles = signUpRequest.getRole();
+//        Set<String> strRoles = signUpRequest.getRole();
         Set<Role> roles = new HashSet<>();
 
-        if (strRoles == null) {
+//        if (strRoles == null) {
             Role userRole = roleRepository.findByName(ERole.ROLE_USER)
                     .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
             roles.add(userRole);
-        } else {
-            strRoles.forEach(role -> {
-                if ("admin".equals(role)) {
-                    Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
-                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                    roles.add(adminRole);
-                } else {
-                    Role userRole = roleRepository.findByName(ERole.ROLE_USER)
-                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
-                    roles.add(userRole);
-                }
-            });
-        }
+//        } else {
+//            strRoles.forEach(role -> {
+//                if ("admin".equals(role)) {
+//                    Role adminRole = roleRepository.findByName(ERole.ROLE_ADMIN)
+//                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+//                    roles.add(adminRole);
+//                } else {
+//                    Role userRole = roleRepository.findByName(ERole.ROLE_USER)
+//                            .orElseThrow(() -> new RuntimeException("Error: Role is not found."));
+//                    roles.add(userRole);
+//                }
+//            });
+//        }
         user.setRoles(roles);
         return user;
     }
-    public User save(User user){
+
+    public User save(User user) {
         return userRepository.save(user);
     }
+
 
 }

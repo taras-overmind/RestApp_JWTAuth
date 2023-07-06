@@ -9,10 +9,10 @@
 		<relativePath/> <!-- lookup parent from repository -->
 	</parent>
 	<groupId>com.taras_overmind</groupId>
-	<artifactId>security</artifactId>
+	<artifactId>contacts</artifactId>
 	<version>0.0.1-SNAPSHOT</version>
-	<name>SecurityDemo</name>
-	<description>Demo project for Spring Security</description>
+	<name>ContactApp</name>
+	<description>Test task</description>
 	<properties>
 		<java.version>17</java.version>
 	</properties>
@@ -77,6 +77,11 @@
 			<version>2.15.2</version>
 		</dependency>
 
+		<dependency>
+			<groupId>org.springdoc</groupId>
+			<artifactId>springdoc-openapi-starter-webmvc-ui</artifactId>
+			<version>2.1.0</version>
+		</dependency>
 
 
 	</dependencies>
@@ -88,6 +93,7 @@
 				<artifactId>spring-boot-maven-plugin</artifactId>
 			</plugin>
 		</plugins>
+		<finalName>contact-app-docker</finalName>
 	</build>
 
 </project>

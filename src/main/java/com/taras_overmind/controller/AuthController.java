@@ -10,7 +10,6 @@ import com.taras_overmind.model.payload.LoginRequest;
 import com.taras_overmind.model.payload.SignupRequest;
 import com.taras_overmind.model.UserDetailsImpl;
 
-import com.taras_overmind.services.UserDetailsServiceImpl;
 import com.taras_overmind.services.UserService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -26,9 +25,9 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 
-@CrossOrigin(origins = "*", maxAge = 3600)
+//@CrossOrigin(origins = "*", maxAge = 3600)
 @RestController
-@RequestMapping("/api/auth")
+@RequestMapping("/api")
 public class AuthController {
     @Autowired
     AuthenticationManager authenticationManager;
@@ -37,11 +36,11 @@ public class AuthController {
     @Autowired
     JwtUtils jwtUtils;
 
-    @PostMapping("/signin")
+    @PostMapping("/auth")
     public ResponseEntity<?> authenticateUser(@RequestBody LoginRequest loginRequest) {
 
         Authentication authentication = authenticationManager.authenticate(
-                new UsernamePasswordAuthenticationToken(loginRequest.getUsername(), loginRequest.getPassword()));
+                new UsernamePasswordAuthenticationToken(loginRequest.getLogin(), loginRequest.getPassword()));
 
         SecurityContextHolder.getContext().setAuthentication(authentication);
         String jwt = jwtUtils.generateJwtToken(authentication);
@@ -57,14 +56,14 @@ public class AuthController {
                 roles));
     }
 
-    @PostMapping("/signup")
-    public HttpStatus registerUser(@RequestBody SignupRequest signUpRequest) {
-        if (userService.existsByUsername(signUpRequest.getUsername())) {
-            return HttpStatus.NOT_ACCEPTABLE;
+    @PostMapping("/register")
+    public String registerUser(@RequestBody SignupRequest signUpRequest) {
+        if (userService.existsByUsername(signUpRequest.getLogin())) {
+            return "User with this username already exists";
         }
         User user = userService.createNewUser(signUpRequest);
         userService.save(user);
 
-        return HttpStatus.OK;
+        return "Registered successfully";
     }
 }
