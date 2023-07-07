@@ -1,4 +1,6 @@
-FROM openjdk:19
+FROM openjdk:17
+VOLUME /tmp
 EXPOSE 8080
-ADD target/contact-app-docker.jar
-ENTRYPOINT ["java", "-jar", "contact-app-docker.jar"]
+ARG JAR_FILE=target/*.jar
+COPY ./target/contact-app-docker.jar app.jar
+ENTRYPOINT ["java", "-jar", "/app.jar"]
